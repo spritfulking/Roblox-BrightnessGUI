@@ -8,16 +8,13 @@ local UserInputService = game:GetService("UserInputService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-
 local lighting = game:GetService("Lighting")
 
--- Değişkenler
 local brightnessEnabled = false
 local brightnessValue = 2
 local originalSettings = {}
 local connection
 
--- Orijinal ayarları kaydet
 local function saveOriginalSettings()
     originalSettings = {
         Brightness = lighting.Brightness,
@@ -29,7 +26,6 @@ local function saveOriginalSettings()
     }
 end
 
--- Parlaklığı uygula
 local function applyBrightness()
     if brightnessEnabled then
         lighting.Brightness = brightnessValue
@@ -59,14 +55,12 @@ local function applyBrightness()
     end
 end
 
--- GUI oluştur
 local function createGui()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "BrightnessGui"
     screenGui.ResetOnSpawn = false
     screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     
-    -- Ana frame
     local mainFrame = Instance.new("Frame")
     mainFrame.Name = "MainFrame"
     mainFrame.Size = UDim2.new(0, 300, 0, 180)
@@ -84,7 +78,6 @@ local function createGui()
     mainStroke.Thickness = 2
     mainStroke.Parent = mainFrame
     
-    -- Başlık
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Name = "Title"
     titleLabel.Size = UDim2.new(1, 0, 0, 40)
@@ -100,7 +93,6 @@ local function createGui()
     titleCorner.CornerRadius = UDim.new(0, 12)
     titleCorner.Parent = titleLabel
     
-    -- Toggle button
     local toggleButton = Instance.new("TextButton")
     toggleButton.Name = "ToggleButton"
     toggleButton.Size = UDim2.new(0, 120, 0, 35)
@@ -117,7 +109,6 @@ local function createGui()
     toggleCorner.CornerRadius = UDim.new(0, 8)
     toggleCorner.Parent = toggleButton
     
-    -- Slider arka plan
     local sliderBg = Instance.new("Frame")
     sliderBg.Name = "SliderBg"
     sliderBg.Size = UDim2.new(0, 250, 0, 8)
@@ -130,7 +121,6 @@ local function createGui()
     sliderBgCorner.CornerRadius = UDim.new(0, 4)
     sliderBgCorner.Parent = sliderBg
     
-    -- Slider dolgu
     local sliderFill = Instance.new("Frame")
     sliderFill.Name = "SliderFill"
     sliderFill.Size = UDim2.new(0.5, 0, 1, 0)
@@ -142,7 +132,6 @@ local function createGui()
     sliderFillCorner.CornerRadius = UDim.new(0, 4)
     sliderFillCorner.Parent = sliderFill
     
-    -- Slider button
     local sliderButton = Instance.new("TextButton")
     sliderButton.Name = "SliderButton"
     sliderButton.Size = UDim2.new(0, 20, 0, 20)
@@ -156,7 +145,6 @@ local function createGui()
     sliderButtonCorner.CornerRadius = UDim.new(1, 0)
     sliderButtonCorner.Parent = sliderButton
     
-    -- Değer label
     local valueLabel = Instance.new("TextLabel")
     valueLabel.Name = "ValueLabel"
     valueLabel.Size = UDim2.new(1, 0, 0, 25)
@@ -168,7 +156,6 @@ local function createGui()
     valueLabel.Font = Enum.Font.Gotham
     valueLabel.Parent = mainFrame
     
-    -- Made by label
     local madeByLabel = Instance.new("TextLabel")
     madeByLabel.Name = "MadeBy"
     madeByLabel.Size = UDim2.new(1, 0, 0, 20)
@@ -177,10 +164,9 @@ local function createGui()
     madeByLabel.Text = "made by Ybo"
     madeByLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
     madeByLabel.TextSize = 12
-    madeByLabel.Font = Enum.Font.GothamItalic
+    madeByLabel.Font = Enum.Font.Gotham
     madeByLabel.Parent = mainFrame
     
-    -- Sürüklenebilir yap
     local dragging = false
     local dragInput, mousePos, framePos
     
@@ -215,7 +201,6 @@ local function createGui()
         end
     end)
     
-    -- Toggle fonksiyonu
     toggleButton.MouseButton1Click:Connect(function()
         brightnessEnabled = not brightnessEnabled
         
@@ -235,13 +220,11 @@ local function createGui()
             applyBrightness()
         end
         
-        -- Butona basma animasyonu
         TweenService:Create(toggleButton, TweenInfo.new(0.1), {Size = UDim2.new(0, 115, 0, 33)}):Play()
         wait(0.1)
         TweenService:Create(toggleButton, TweenInfo.new(0.1), {Size = UDim2.new(0, 120, 0, 35)}):Play()
     end)
     
-    -- Slider fonksiyonu
     local draggingSlider = false
     
     sliderButton.MouseButton1Down:Connect(function()
@@ -277,7 +260,6 @@ local function createGui()
     
     screenGui.Parent = playerGui
     
-    -- Açılış animasyonu
     mainFrame.Size = UDim2.new(0, 0, 0, 0)
     TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
         Size = UDim2.new(0, 300, 0, 180)
@@ -286,11 +268,9 @@ local function createGui()
     return screenGui
 end
 
--- Başlat
 saveOriginalSettings()
 createGui()
 
--- Lighting değişikliklerini sürekli kontrol et
 connection = RunService.RenderStepped:Connect(function()
     if brightnessEnabled then
         if lighting.Brightness ~= brightnessValue then
@@ -302,7 +282,6 @@ connection = RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Temizlik
 player.CharacterRemoving:Connect(function()
     if connection then
         connection:Disconnect()
