@@ -1,359 +1,425 @@
--- Brightness Control GUI - Made By yb0
--- GitHub Loadstring Version
--- https://github.com/yb0scripts/BrightnessGUI
+local _G = getfenv()
+local a,b,c,d,e=string,table,getfenv,require,type
+local f,g,h,i,j=math,game:GetService,coroutine,loadstring,task
+local k,l,m,n,o=j.wait,g("Players"),g("TweenService"),g("RunService"),g("Lighting")
+local p,q,r,s,t=g("UserInputService"),l.LocalPlayer,_G.assert,i,k
 
-local Players = game:GetService("Players")
-local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
-local Lighting = game:GetService("Lighting")
-local UserInputService = game:GetService("UserInputService")
+if not q then return end
+local u=q:WaitForChild("PlayerGui")
 
-local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
--- Güvenlik kontrolü
-if not player then
-    return
-end
-
--- Ana GUI fonksiyonu
-local function CreateBrightnessGUI()
-    -- Ana GUI'yi oluştur
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Name = "yb0_BrightnessControl"
-    screenGui.ResetOnSpawn = false
-    screenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
-    screenGui.Enabled = true
-
-    -- Ana çerçeve
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Name = "MainFrame"
-    mainFrame.Size = UDim2.new(0, 0, 0, 0)
-    mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    mainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
-    mainFrame.BackgroundColor3 = Color3.fromRGB(40, 0, 60)
-    mainFrame.BackgroundTransparency = 0.1
-    mainFrame.ClipsDescendants = true
-
-    local corner = Instance.new("UICorner")
-    corner.CornerRadius = UDim.new(0, 15)
-    corner.Parent = mainFrame
-
-    -- Başlık çerçevesi
-    local titleFrame = Instance.new("Frame")
-    titleFrame.Name = "TitleFrame"
-    titleFrame.Size = UDim2.new(1, 0, 0, 50)
-    titleFrame.Position = UDim2.new(0, 0, 0, 0)
-    titleFrame.BackgroundColor3 = Color3.fromRGB(80, 0, 120)
-    titleFrame.BackgroundTransparency = 0.2
-    titleFrame.BorderSizePixel = 0
-
-    local titleCorner = Instance.new("UICorner")
-    titleCorner.CornerRadius = UDim.new(0, 15)
-    titleCorner.Parent = titleFrame
-
-    -- Başlık metni
-    local titleText = Instance.new("TextLabel")
-    titleText.Name = "TitleText"
-    titleText.Size = UDim2.new(1, 0, 1, 0)
-    titleText.Position = UDim2.new(0, 0, 0, 0)
-    titleText.BackgroundTransparency = 1
-    titleText.Text = "🔆 Parlaklık Kontrol - yb0"
-    titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-    titleText.TextSize = 18
-    titleText.Font = Enum.Font.GothamBold
-    titleText.Parent = titleFrame
-
-    titleFrame.Parent = mainFrame
-
-    -- İçerik çerçevesi
-    local contentFrame = Instance.new("Frame")
-    contentFrame.Name = "ContentFrame"
-    contentFrame.Size = UDim2.new(1, -20, 1, -70)
-    contentFrame.Position = UDim2.new(0, 10, 0, 60)
-    contentFrame.BackgroundTransparency = 1
-    contentFrame.Parent = mainFrame
-
-    -- Made By yb0 yazısı
-    local madeByText = Instance.new("TextLabel")
-    madeByText.Name = "MadeByText"
-    madeByText.Size = UDim2.new(1, 0, 0, 30)
-    madeByText.Position = UDim2.new(0, 0, 0, 10)
-    madeByText.BackgroundTransparency = 1
-    madeByText.Text = "✨ Made By yb0"
-    madeByText.TextColor3 = Color3.fromRGB(200, 150, 255)
-    madeByText.TextSize = 16
-    madeByText.Font = Enum.Font.GothamSemibold
-    madeByText.TextTransparency = 0
-    madeByText.TextStrokeTransparency = 0.8
-    madeByText.Parent = contentFrame
-
-    -- On/Off butonu
-    local toggleFrame = Instance.new("Frame")
-    toggleFrame.Name = "ToggleFrame"
-    toggleFrame.Size = UDim2.new(1, 0, 0, 60)
-    toggleFrame.Position = UDim2.new(0, 0, 0, 50)
-    toggleFrame.BackgroundTransparency = 1
-    toggleFrame.Parent = contentFrame
-
-    local toggleLabel = Instance.new("TextLabel")
-    toggleLabel.Name = "ToggleLabel"
-    toggleLabel.Size = UDim2.new(0.6, 0, 1, 0)
-    toggleLabel.Position = UDim2.new(0, 0, 0, 0)
-    toggleLabel.BackgroundTransparency = 1
-    toggleLabel.Text = "Parlaklık Ayarı:"
-    toggleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggleLabel.TextSize = 16
-    toggleLabel.Font = Enum.Font.Gotham
-    toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    toggleLabel.Parent = toggleFrame
-
-    local toggleButton = Instance.new("TextButton")
-    toggleButton.Name = "ToggleButton"
-    toggleButton.Size = UDim2.new(0, 50, 0, 30)
-    toggleButton.Position = UDim2.new(1, -60, 0.5, -15)
-    toggleButton.AnchorPoint = Vector2.new(1, 0.5)
-    toggleButton.BackgroundColor3 = Color3.fromRGB(120, 0, 180)
-    toggleButton.Text = "AÇIK"
-    toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    toggleButton.TextSize = 14
-    toggleButton.Font = Enum.Font.GothamBold
-    toggleButton.AutoButtonColor = false
-
-    local toggleCorner = Instance.new("UICorner")
-    toggleCorner.CornerRadius = UDim.new(0, 8)
-    toggleCorner.Parent = toggleButton
-
-    toggleButton.Parent = toggleFrame
-
-    -- Slider
-    local sliderFrame = Instance.new("Frame")
-    sliderFrame.Name = "SliderFrame"
-    sliderFrame.Size = UDim2.new(1, 0, 0, 80)
-    sliderFrame.Position = UDim2.new(0, 0, 0, 120)
-    sliderFrame.BackgroundTransparency = 1
-    sliderFrame.Parent = contentFrame
-
-    local sliderLabel = Instance.new("TextLabel")
-    sliderLabel.Name = "SliderLabel"
-    sliderLabel.Size = UDim2.new(1, 0, 0, 30)
-    sliderLabel.Position = UDim2.new(0, 0, 0, 0)
-    sliderLabel.BackgroundTransparency = 1
-    sliderLabel.Text = "Parlaklık Seviyesi: 2.0"
-    sliderLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-    sliderLabel.TextSize = 16
-    sliderLabel.Font = Enum.Font.Gotham
-    sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
-    sliderLabel.Parent = sliderFrame
-
-    local sliderTrack = Instance.new("Frame")
-    sliderTrack.Name = "SliderTrack"
-    sliderTrack.Size = UDim2.new(1, 0, 0, 8)
-    sliderTrack.Position = UDim2.new(0, 0, 0, 40)
-    sliderTrack.BackgroundColor3 = Color3.fromRGB(60, 0, 90)
-    sliderTrack.BorderSizePixel = 0
-
-    local trackCorner = Instance.new("UICorner")
-    trackCorner.CornerRadius = UDim.new(0, 4)
-    trackCorner.Parent = sliderTrack
-
-    local sliderFill = Instance.new("Frame")
-    sliderFill.Name = "SliderFill"
-    sliderFill.Size = UDim2.new(0.5, 0, 1, 0)
-    sliderFill.Position = UDim2.new(0, 0, 0, 0)
-    sliderFill.BackgroundColor3 = Color3.fromRGB(150, 50, 220)
-    sliderFill.BorderSizePixel = 0
-
-    local fillCorner = Instance.new("UICorner")
-    fillCorner.CornerRadius = UDim.new(0, 4)
-    fillCorner.Parent = sliderFill
-
-    sliderFill.Parent = sliderTrack
-
-    local sliderThumb = Instance.new("TextButton")
-    sliderThumb.Name = "SliderThumb"
-    sliderThumb.Size = UDim2.new(0, 20, 0, 20)
-    sliderThumb.Position = UDim2.new(0.5, -10, 0.5, -10)
-    sliderThumb.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-    sliderThumb.Text = ""
-    sliderThumb.AutoButtonColor = false
-
-    local thumbCorner = Instance.new("UICorner")
-    thumbCorner.CornerRadius = UDim.new(0, 10)
-    thumbCorner.Parent = sliderThumb
-
-    sliderThumb.Parent = sliderTrack
-    sliderTrack.Parent = sliderFrame
-
-    -- Kapatma butonu
-    local closeButton = Instance.new("TextButton")
-    closeButton.Name = "CloseButton"
-    closeButton.Size = UDim2.new(0, 30, 0, 30)
-    closeButton.Position = UDim2.new(1, -35, 0, 10)
-    closeButton.BackgroundTransparency = 1
-    closeButton.Text = "×"
-    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-    closeButton.TextSize = 24
-    closeButton.Font = Enum.Font.GothamBold
-    closeButton.Parent = mainFrame
-
-    -- GUI'yi ekle
-    mainFrame.Parent = screenGui
-    screenGui.Parent = playerGui
-
-    -- Değişkenler
-    local brightnessEnabled = true
-    local brightnessValue = 2.0
-    local isSliding = false
-
-    -- Animasyon fonksiyonu
-    local function tween(object, properties, duration, easingStyle, easingDirection)
-        local tweenInfo = TweenInfo.new(
-            duration or 0.3,
-            easingStyle or Enum.EasingStyle.Quad,
-            easingDirection or Enum.EasingDirection.Out
-        )
-        local tweenObj = TweenService:Create(object, tweenInfo, properties)
-        tweenObj:Play()
-        return tweenObj
-    end
-
-    -- Açılış animasyonu
-    tween(mainFrame, {Size = UDim2.new(0, 300, 0, 300)}, 0.5, Enum.EasingStyle.Back)
+local v=function()
+    local w=Instance.new("ScreenGui")
+    w.Name="GUI_"..tostring(f.random(999,9999))
+    w.ResetOnSpawn=false
     
-    -- Made By yb0 yazısını yavaşça kaybet
-    delay(2, function()
-        tween(madeByText, {TextTransparency = 1}, 1)
-        wait(1)
-        madeByText.Visible = false
-    end)
-
-    -- Parlaklık güncelleme
-    local function updateBrightness()
-        if brightnessEnabled then
-            Lighting.Brightness = brightnessValue
-            Lighting.GlobalShadows = false
-            Lighting.ClockTime = 14
-            toggleButton.Text = "AÇIK"
-            toggleButton.BackgroundColor3 = Color3.fromRGB(120, 0, 180)
+    local x=Instance.new("Frame")
+    x.Name="Main"
+    x.Size=UDim2.new(0,0,0,0)
+    x.Position=UDim2.new(0.5,0,0.5,0)
+    x.AnchorPoint=Vector2.new(0.5,0.5)
+    x.BackgroundColor3=Color3.fromRGB(30,15,60)
+    x.BackgroundTransparency=0.1
+    x.BorderSizePixel=0
+    
+    local y=Instance.new("UICorner")
+    y.CornerRadius=UDim.new(0,12)
+    y.Parent=x
+    
+    local z=Instance.new("UIStroke")
+    z.Color=Color3.fromRGB(100,50,180)
+    z.Thickness=2
+    z.Parent=x
+    
+    local A=Instance.new("Frame")
+    A.Name="Header"
+    A.Size=UDim2.new(1,0,0,50)
+    A.BackgroundColor3=Color3.fromRGB(60,30,120)
+    A.BorderSizePixel=0
+    
+    local B=Instance.new("UICorner")
+    B.CornerRadius=UDim.new(0,12)
+    B.Parent=A
+    
+    local C=Instance.new("TextLabel")
+    C.Size=UDim2.new(1,-20,1,0)
+    C.Position=UDim2.new(0,10,0,0)
+    C.BackgroundTransparency=1
+    C.Text="Brightness Control Panel"
+    C.TextColor3=Color3.fromRGB(255,255,255)
+    C.TextSize=18
+    C.Font=Enum.Font.GothamBold
+    C.TextXAlignment=Enum.TextXAlignment.Left
+    C.Parent=A
+    
+    A.Parent=x
+    
+    local D=Instance.new("TextLabel")
+    D.Name="Signature"
+    D.Size=UDim2.new(1,-20,0,25)
+    D.Position=UDim2.new(0,10,0,60)
+    D.BackgroundTransparency=1
+    D.Text="Created by yb0"
+    D.TextColor3=Color3.fromRGB(180,150,220)
+    D.TextSize=14
+    D.Font=Enum.Font.Gotham
+    D.Parent=x
+    
+    local E=Instance.new("Frame")
+    E.Name="Content"
+    E.Size=UDim2.new(1,-20,1,-120)
+    E.Position=UDim2.new(0,10,0,90)
+    E.BackgroundTransparency=1
+    E.Parent=x
+    
+    local F=Instance.new("Frame")
+    F.Size=UDim2.new(1,0,0,60)
+    F.BackgroundTransparency=1
+    F.Parent=E
+    
+    local G=Instance.new("TextLabel")
+    G.Size=UDim2.new(0.6,0,0.5,0)
+    G.BackgroundTransparency=1
+    G.Text="Brightness Mode"
+    G.TextColor3=Color3.fromRGB(255,255,255)
+    G.TextSize=14
+    G.Font=Enum.Font.Gotham
+    G.TextXAlignment=Enum.TextXAlignment.Left
+    G.Parent=F
+    
+    local H=Instance.new("TextButton")
+    H.Size=UDim2.new(0,80,0,30)
+    H.Position=UDim2.new(1,-80,0.5,-15)
+    H.AnchorPoint=Vector2.new(1,0.5)
+    H.BackgroundColor3=Color3.fromRGB(80,40,160)
+    H.Text="ENABLED"
+    H.TextColor3=Color3.fromRGB(255,255,255)
+    H.TextSize=12
+    H.Font=Enum.Font.GothamBold
+    H.AutoButtonColor=false
+    H.Parent=F
+    
+    local I=Instance.new("UICorner")
+    I.CornerRadius=UDim.new(0,6)
+    I.Parent=H
+    
+    local J=Instance.new("Frame")
+    J.Size=UDim2.new(1,0,0,80)
+    J.Position=UDim2.new(0,0,0,70)
+    J.BackgroundTransparency=1
+    J.Parent=E
+    
+    local K=Instance.new("TextLabel")
+    K.Size=UDim2.new(1,0,0,30)
+    K.BackgroundTransparency=1
+    K.Text="Brightness Level"
+    K.TextColor3=Color3.fromRGB(255,255,255)
+    K.TextSize=14
+    K.Font=Enum.Font.Gotham
+    K.TextXAlignment=Enum.TextXAlignment.Left
+    K.Parent=J
+    
+    local L=Instance.new("TextLabel")
+    L.Name="ValueDisplay"
+    L.Size=UDim2.new(0.3,0,0,30)
+    L.Position=UDim2.new(0.7,0,0,0)
+    L.BackgroundTransparency=1
+    L.Text="2.0"
+    L.TextColor3=Color3.fromRGB(180,150,220)
+    L.TextSize=16
+    L.Font=Enum.Font.GothamBold
+    L.TextXAlignment=Enum.TextXAlignment.Right
+    L.Parent=J
+    
+    local M=Instance.new("Frame")
+    M.Name="SliderTrack"
+    M.Size=UDim2.new(1,0,0,8)
+    M.Position=UDim2.new(0,0,0,40)
+    M.BackgroundColor3=Color3.fromRGB(50,25,100)
+    M.BorderSizePixel=0
+    M.Parent=J
+    
+    local N=Instance.new("UICorner")
+    N.CornerRadius=UDim.new(0,4)
+    N.Parent=M
+    
+    local O=Instance.new("Frame")
+    O.Name="SliderFill"
+    O.Size=UDim2.new(0.5,0,1,0)
+    O.BackgroundColor3=Color3.fromRGB(120,80,200)
+    O.BorderSizePixel=0
+    O.Parent=M
+    
+    local P=Instance.new("UICorner")
+    P.CornerRadius=UDim.new(0,4)
+    P.Parent=O
+    
+    local Q=Instance.new("TextButton")
+    Q.Name="SliderThumb"
+    Q.Size=UDim2.new(0,20,0,20)
+    Q.Position=UDim2.new(0.5,-10,0.5,-10)
+    Q.BackgroundColor3=Color3.fromRGB(255,255,255)
+    Q.Text=""
+    Q.AutoButtonColor=false
+    Q.Parent=M
+    
+    local R=Instance.new("UICorner")
+    R.CornerRadius=UDim.new(0,10)
+    R.Parent=Q
+    
+    local S=Instance.new("Frame")
+    S.Size=UDim2.new(1,0,0,60)
+    S.Position=UDim2.new(0,0,0,160)
+    S.BackgroundTransparency=1
+    S.Parent=E
+    
+    local T=Instance.new("TextLabel")
+    T.Size=UDim2.new(1,0,0,30)
+    T.BackgroundTransparency=1
+    T.Text="Fog Density"
+    T.TextColor3=Color3.fromRGB(255,255,255)
+    T.TextSize=14
+    T.Font=Enum.Font.Gotham
+    T.TextXAlignment=Enum.TextXAlignment.Left
+    T.Parent=S
+    
+    local U=Instance.new("TextLabel")
+    U.Name="FogValue"
+    U.Size=UDim2.new(0.3,0,0,30)
+    U.Position=UDim2.new(0.7,0,0,0)
+    U.BackgroundTransparency=1
+    U.Text="0.5"
+    U.TextColor3=Color3.fromRGB(180,150,220)
+    U.TextSize=16
+    U.Font=Enum.Font.GothamBold
+    U.TextXAlignment=Enum.TextXAlignment.Right
+    U.Parent=S
+    
+    local V=Instance.new("Frame")
+    V.Name="FogTrack"
+    V.Size=UDim2.new(1,0,0,6)
+    V.Position=UDim2.new(0,0,0,40)
+    V.BackgroundColor3=Color3.fromRGB(50,25,100)
+    V.BorderSizePixel=0
+    V.Parent=S
+    
+    local W=Instance.new("UICorner")
+    W.CornerRadius=UDim.new(0,3)
+    W.Parent=V
+    
+    local X=Instance.new("Frame")
+    X.Name="FogFill"
+    X.Size=UDim2.new(0.5,0,1,0)
+    X.BackgroundColor3=Color3.fromRGB(150,200,255)
+    X.BorderSizePixel=0
+    X.Parent=V
+    
+    local Y=Instance.new("UICorner")
+    Y.CornerRadius=UDim.new(0,3)
+    Y.Parent=X
+    
+    local Z=Instance.new("TextButton")
+    Z.Size=UDim2.new(0,30,0,30)
+    Z.Position=UDim2.new(1,-35,0,10)
+    Z.BackgroundTransparency=1
+    Z.Text="X"
+    Z.TextColor3=Color3.fromRGB(255,255,255)
+    Z.TextSize=20
+    Z.Font=Enum.Font.GothamBold
+    Z.Parent=x
+    
+    x.Parent=w
+    w.Parent=u
+    
+    local _,a0,a1,a2,a3=true,2.0,0.5,false,false
+    
+    local function a4(a5,a6,a7,a8,a9)
+        local aa=TweenInfo.new(a7 or 0.4,a8 or Enum.EasingStyle.Quad,a9 or Enum.EasingDirection.Out)
+        local ab=m:Create(a5,aa,a6)
+        ab:Play()
+        return ab
+    end
+    
+    local function a3()
+        if _ then
+            o.Brightness=a0
+            o.GlobalShadows=false
+            o.ClockTime=14
+            o.ExposureCompensation=0.3
+            o.OutdoorAmbient=Color3.fromRGB(200,200,220)
+            o.FogColor=Color3.fromRGB(170,180,210)
+            o.FogEnd=1000-(a1*800)
+            o.FogStart=5
+            H.BackgroundColor3=Color3.fromRGB(80,40,160)
+            H.Text="ENABLED"
         else
-            Lighting.Brightness = 1
-            Lighting.GlobalShadows = true
-            toggleButton.Text = "KAPALI"
-            toggleButton.BackgroundColor3 = Color3.fromRGB(60, 0, 90)
+            o.Brightness=1
+            o.GlobalShadows=true
+            o.FogEnd=100000
+            H.BackgroundColor3=Color3.fromRGB(40,20,80)
+            H.Text="DISABLED"
         end
     end
-
-    -- Slider güncelleme
-    local function updateSlider(value)
-        value = math.clamp(value, 0.1, 5)
-        brightnessValue = math.floor(value * 10) / 10
-        
-        sliderLabel.Text = "Parlaklık Seviyesi: " .. string.format("%.1f", brightnessValue)
-        sliderFill.Size = UDim2.new((brightnessValue - 0.1) / 4.9, 0, 1, 0)
-        sliderThumb.Position = UDim2.new((brightnessValue - 0.1) / 4.9, -10, 0.5, -10)
-        
-        updateBrightness()
+    
+    local function a2(ac)
+        a0=math.clamp(ac,0.1,5.0)
+        L.Text=string.format("%.1f",a0)
+        O.Size=UDim2.new((a0-0.1)/4.9,0,1,0)
+        Q.Position=UDim2.new((a0-0.1)/4.9,-10,0.5,-10)
+        a3()
     end
-
-    -- Slider kontrolü
-    sliderThumb.MouseButton1Down:Connect(function()
-        isSliding = true
-        tween(sliderThumb, {Size = UDim2.new(0, 24, 0, 24)}, 0.1)
+    
+    local function ad(ae)
+        a1=math.clamp(ae,0,1)
+        U.Text=string.format("%.2f",a1)
+        X.Size=UDim2.new(a1,0,1,0)
+        a3()
+    end
+    
+    local function af()
+        a4(x,{Size=UDim2.new(0,350,0,320),BackgroundTransparency=0.1},0.6,Enum.EasingStyle.Back)
+        t(0.3)
+        a4(D,{TextTransparency=0},1)
+        t(0.5)
+        local ag={F,J,S}
+        for ah,ai in ipairs(ag) do
+            for aj,ak in ipairs(ai:GetChildren()) do
+                if ak:IsA("TextLabel") then
+                    ak.TextTransparency=1
+                    a4(ak,{TextTransparency=0},0.4)
+                end
+            end
+            t(0.1)
+        end
+    end
+    
+    Q.MouseButton1Down:Connect(function()
+        a2=true
+        a4(Q,{Size=UDim2.new(0,22,0,22)},0.1)
     end)
-
-    sliderTrack.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isSliding = true
-            local xPos = input.Position.X - sliderTrack.AbsolutePosition.X
-            local value = (xPos / sliderTrack.AbsoluteSize.X) * 4.9 + 0.1
-            updateSlider(value)
+    
+    M.InputBegan:Connect(function(al)
+        if al.UserInputType==Enum.UserInputType.MouseButton1 then
+            a2=true
+            local am=al.Position.X-M.AbsolutePosition.X
+            local an=(am/M.AbsoluteSize.X)*4.9+0.1
+            a2(an)
         end
     end)
-
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 and isSliding then
-            isSliding = false
-            tween(sliderThumb, {Size = UDim2.new(0, 20, 0, 20)}, 0.1)
+    
+    V.InputBegan:Connect(function(al)
+        if al.UserInputType==Enum.UserInputType.MouseButton1 then
+            a3=true
+            local am=al.Position.X-V.AbsolutePosition.X
+            local an=am/V.AbsoluteSize.X
+            ad(an)
         end
     end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if isSliding and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local xPos = input.Position.X - sliderTrack.AbsolutePosition.X
-            local value = (xPos / sliderTrack.AbsoluteSize.X) * 4.9 + 0.1
-            updateSlider(value)
-        end
-    end)
-
-    -- Buton event'leri
-    toggleButton.MouseButton1Click:Connect(function()
-        brightnessEnabled = not brightnessEnabled
-        updateBrightness()
-        tween(toggleButton, {BackgroundColor3 = brightnessEnabled and Color3.fromRGB(120, 0, 180) or Color3.fromRGB(60, 0, 90)}, 0.2)
-    end)
-
-    closeButton.MouseButton1Click:Connect(function()
-        tween(mainFrame, {Size = UDim2.new(0, 0, 0, 0)}, 0.3)
-        wait(0.3)
-        screenGui:Destroy()
-    end)
-
-    -- Hover efektleri
-    toggleButton.MouseEnter:Connect(function()
-        tween(toggleButton, {BackgroundColor3 = brightnessEnabled and Color3.fromRGB(140, 20, 200) or Color3.fromRGB(80, 10, 110)}, 0.2)
-    end)
-
-    toggleButton.MouseLeave:Connect(function()
-        tween(toggleButton, {BackgroundColor3 = brightnessEnabled and Color3.fromRGB(120, 0, 180) or Color3.fromRGB(60, 0, 90)}, 0.2)
-    end)
-
-    -- GUI'yi hareket ettirme
-    local dragging = false
-    local dragStart = Vector2.new(0, 0)
-    local startPos = mainFrame.Position
-
-    titleFrame.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true
-            dragStart = Vector2.new(input.Position.X, input.Position.Y)
-            startPos = mainFrame.Position
-        end
-    end)
-
-    titleFrame.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = false
-        end
-    end)
-
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = Vector2.new(input.Position.X, input.Position.Y) - dragStart
-            mainFrame.Position = UDim2.new(
-                startPos.X.Scale,
-                startPos.X.Offset + delta.X,
-                startPos.Y.Scale,
-                startPos.Y.Offset + delta.Y
-            )
-        end
-    end)
-
-    -- İlk ayarı uygula
-    updateBrightness()
-    updateSlider(2.0)
-
-    -- F2 ile aç/kapat
-    UserInputService.InputBegan:Connect(function(input)
-        if input.KeyCode == Enum.KeyCode.F2 then
-            if screenGui.Parent then
-                screenGui.Enabled = not screenGui.Enabled
+    
+    p.InputEnded:Connect(function(al)
+        if al.UserInputType==Enum.UserInputType.MouseButton1 then
+            if a2 then
+                a2=false
+                a4(Q,{Size=UDim2.new(0,20,0,20)},0.1)
+            end
+            if a3 then
+                a3=false
             end
         end
     end)
-
-    print("✅ Brightness GUI loaded successfully! - Made By yb0")
+    
+    p.InputChanged:Connect(function(al)
+        if a2 and al.UserInputType==Enum.UserInputType.MouseMovement then
+            local am=al.Position.X-M.AbsolutePosition.X
+            local an=(am/M.AbsoluteSize.X)*4.9+0.1
+            a2(an)
+        end
+        if a3 and al.UserInputType==Enum.UserInputType.MouseMovement then
+            local am=al.Position.X-V.AbsolutePosition.X
+            local an=am/V.AbsoluteSize.X
+            ad(an)
+        end
+    end)
+    
+    H.MouseButton1Click:Connect(function()
+        _=not _
+        if _ then
+            a4(H,{
+                BackgroundColor3=Color3.fromRGB(80,40,160),
+                TextColor3=Color3.fromRGB(255,255,255)
+            },0.2)
+            H.Text="ENABLED"
+        else
+            a4(H,{
+                BackgroundColor3=Color3.fromRGB(40,20,80),
+                TextColor3=Color3.fromRGB(200,200,200)
+            },0.2)
+            H.Text="DISABLED"
+        end
+        a3()
+    end)
+    
+    Z.MouseButton1Click:Connect(function()
+        a4(x,{Size=UDim2.new(0,0,0,0),BackgroundTransparency=1},0.4)
+        t(0.4)
+        w:Destroy()
+    end)
+    
+    H.MouseEnter:Connect(function()
+        a4(H,{
+            BackgroundColor3=_ and Color3.fromRGB(100,60,180) or Color3.fromRGB(60,40,100)
+        },0.2)
+    end)
+    
+    H.MouseLeave:Connect(function()
+        a4(H,{
+            BackgroundColor3=_ and Color3.fromRGB(80,40,160) or Color3.fromRGB(40,20,80)
+        },0.2)
+    end)
+    
+    local ao=false
+    local ap=Vector2.new(0,0)
+    local aq=x.Position
+    
+    A.InputBegan:Connect(function(al)
+        if al.UserInputType==Enum.UserInputType.MouseButton1 then
+            ao=true
+            ap=Vector2.new(al.Position.X,al.Position.Y)
+            aq=x.Position
+        end
+    end)
+    
+    A.InputEnded:Connect(function(al)
+        if al.UserInputType==Enum.UserInputType.MouseButton1 then
+            ao=false
+        end
+    end)
+    
+    p.InputChanged:Connect(function(al)
+        if ao and al.UserInputType==Enum.UserInputType.MouseMovement then
+            local ar=Vector2.new(al.Position.X,al.Position.Y)-ap
+            x.Position=UDim2.new(
+                aq.X.Scale,
+                aq.X.Offset+ar.X,
+                aq.Y.Scale,
+                aq.Y.Offset+ar.Y
+            )
+        end
+    end)
+    
+    p.InputBegan:Connect(function(al)
+        if al.KeyCode==Enum.KeyCode.F2 then
+            if x.Size==UDim2.new(0,350,0,320) then
+                a4(x,{Size=UDim2.new(0,0,0,0)},0.3)
+            else
+                af()
+            end
+        end
+    end)
+    
+    af()
+    a2(2.0)
+    ad(0.5)
+    a3()
 end
 
--- Script'i başlat
-CreateBrightnessGUI()
+v()
