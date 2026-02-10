@@ -86,7 +86,7 @@ local function createGui()
     titleLabel.Text = "Brightness Control"
     titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
     titleLabel.TextSize = 18
-    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.Font = Enum.Font.SourceSans
     titleLabel.Parent = mainFrame
     
     local titleCorner = Instance.new("UICorner")
@@ -102,7 +102,7 @@ local function createGui()
     toggleButton.Text = "OFF"
     toggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     toggleButton.TextSize = 16
-    toggleButton.Font = Enum.Font.GothamBold
+    toggleButton.Font = Enum.Font.SourceSansBold
     toggleButton.Parent = mainFrame
     
     local toggleCorner = Instance.new("UICorner")
@@ -153,7 +153,7 @@ local function createGui()
     valueLabel.Text = "Brightness: 2.0"
     valueLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
     valueLabel.TextSize = 14
-    valueLabel.Font = Enum.Font.Gotham
+    valueLabel.Font = Enum.Font.SourceSans
     valueLabel.Parent = mainFrame
     
     local madeByLabel = Instance.new("TextLabel")
@@ -164,7 +164,7 @@ local function createGui()
     madeByLabel.Text = "made by Ybo"
     madeByLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
     madeByLabel.TextSize = 12
-    madeByLabel.Font = Enum.Font.Gotham
+    madeByLabel.Font = Enum.Font.SourceSans
     madeByLabel.Parent = mainFrame
     
     local dragging = false
