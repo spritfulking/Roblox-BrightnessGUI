@@ -55,6 +55,39 @@ local function applyBrightness()
     end
 end
 
+local function showIntro(callback)
+    local introGui = Instance.new("ScreenGui")
+    introGui.Name = "IntroGui"
+    introGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+    
+    local introLabel = Instance.new("TextLabel")
+    introLabel.Size = UDim2.new(0, 300, 0, 100)
+    introLabel.Position = UDim2.new(0.5, -150, 0.5, -50)
+    introLabel.BackgroundTransparency = 1
+    introLabel.Text = "made by Ybo"
+    introLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    introLabel.TextSize = 32
+    introLabel.Font = Enum.Font.SourceSansBold
+    introLabel.TextTransparency = 1
+    introLabel.Parent = introGui
+    
+    introGui.Parent = playerGui
+    
+    TweenService:Create(introLabel, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        TextTransparency = 0
+    }):Play()
+    
+    wait(2)
+    
+    TweenService:Create(introLabel, TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+        TextTransparency = 1
+    }):Play()
+    
+    wait(1)
+    introGui:Destroy()
+    callback()
+end
+
 local function createGui()
     local screenGui = Instance.new("ScreenGui")
     screenGui.Name = "BrightnessGui"
@@ -269,21 +302,24 @@ local function createGui()
 end
 
 saveOriginalSettings()
-createGui()
 
-connection = RunService.RenderStepped:Connect(function()
-    if brightnessEnabled then
-        if lighting.Brightness ~= brightnessValue then
-            lighting.Brightness = brightnessValue
+showIntro(function()
+    createGui()
+    
+    connection = RunService.RenderStepped:Connect(function()
+        if brightnessEnabled then
+            if lighting.Brightness ~= brightnessValue then
+                lighting.Brightness = brightnessValue
+            end
+            if lighting.ClockTime ~= 14 then
+                lighting.ClockTime = 14
+            end
         end
-        if lighting.ClockTime ~= 14 then
-            lighting.ClockTime = 14
+    end)
+    
+    player.CharacterRemoving:Connect(function()
+        if connection then
+            connection:Disconnect()
         end
-    end
-end)
-
-player.CharacterRemoving:Connect(function()
-    if connection then
-        connection:Disconnect()
-    end
+    end)
 end)
